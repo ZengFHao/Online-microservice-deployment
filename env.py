@@ -1,25 +1,19 @@
-ContainerNumber = 6  # 容器数
-NodeNumber = 5  # 节点数
-# ServiceNumber = 6  # 服务种类
-# ResourceType = 3  # 资源类型数,CPU,Mem,BandWidth
-# service_containernum = [1, 1, 3, 1, 1, 2]  # 每种服务需要启动的容器数量（按编号索引）
-# service_container = [[0], [1], [2, 3, 4], [5], [6], [7, 8]]  # 每种服务对应的容器编号（按编号索引）
-# service_container_relationship = [0, 1, 2, 2, 2, 3, 4, 5, 5]  # 上面两个数组的对应
-ServiceNumber = 4  # 服务种类
-ResourceType = 3  # 资源类型数,CPU,Mem,BandWidth
-service_containernum = [1, 1, 3, 1]  # 每种服务需要启动的容器数量（按编号索引）
-service_container = [[0], [1], [2, 3, 4], [5]]  # 每种服务对应的容器编号（按编号索引）
-service_container_relationship = [0, 1, 2, 2, 2, 3]  # 上面两个数组的对应
-node_delay = [200, 100, 200, 100, 150]  # 每个节点的延迟
-node_loss = [5, 8, 15, 8, 10]  # 每个节点的丢包%
-alpha = 0.5  # reward weighting factor
+ContainerNumber = 6  
+NodeNumber = 5  
+ServiceNumber = 6  
+ResourceType = 3  
+service_containernum = [1, 1, 3, 1, 1, 2]  
+service_container = [[0], [1], [2, 3, 4], [5], [6], [7, 8]]  
+service_container_relationship = [0, 1, 2, 2, 2, 3, 4, 5, 5] 
+node_delay = [200, 100, 200, 100, 150] 
+node_loss = [5, 8, 15, 8, 10]  
+alpha = 0.5 
 beta = [0.5, 0.5]
 count = 0
 CPUnum = [4,2,2,1,1]
 Mem = [1024,1024,512,512,512]
-# BandWidth = [2,1,2,2,2]
 BandWidth = [2,1,2,2,2]
-e_greed = 0.3  # 模型学习率
+e_greed = 0.3  
 e_greed_decrement = 1e-6
 
 import numpy as np
@@ -39,15 +33,7 @@ class Env():
         self.prepare(obs, new_container)
 
     def prepare(self,start_obs, new_container):
-        #第一个元素表示是否已经部署
-        # self.container_state_queue = [-1, 0.5, 128, 0.5,
-        #                               -1, 1, 128, 1.2,
-        #                               -1, 0.5, 256, 0.2,
-        #                               -1, 0.5, 256, 0.4,
-        #                               -1, 0.5, 256, 0.4,
-        #                               -1, 1, 128, 0.8]  # 设置硬件条件
         print(len(start_obs) )
-        #需要修改-3*新的微服务数目
         old_container_number = int((len(start_obs) - 15) / 11)
         self.new_container_number = self.calContainerNumber(new_container)
         node_state_index = 4 * old_container_number
@@ -60,26 +46,19 @@ class Env():
             for element in sublist:
                 self.container_state_queue.append(element)
         for i in range(NodeNumber):
-            # self.node_state_queue.extend([0, 0, 0, 0, 0, 0, 0, 0])
             """ 0-5表示容器部署情况
                 6-9表示该节点的资源占用情况
             """
-            # self.node_state_queue.extend([0,0,0,0,0,0,0,0,0])  # 微服务启动容器数+3
             old_node_state = start_obs[node_state_index : node_state_index + old_container_number + 3]
             for i in range(self.new_container_number):
                 old_node_state.insert(len(old_node_state) - 3, 0)
             self.node_state_queue.extend(old_node_state)
-        self.loss_state_query = old_loss_state   #每个容器的丢包率
-        self.delay_state_query = old_delay_state  #每个容器的延迟
-        self.State = self.container_state_queue + self.node_state_queue + self.loss_state_query + self.delay_state_query    #一个state的所有环境情况
-        self.action = [-1, -1]  #[a,b]表示在a节点上部署b容器
-        self.action_queue = [-1, -1]    #记录部署动作
-
-        # Communication weight between microservices
-        # 四种微服务间的通信成本
+        self.loss_state_query = old_loss_state  
+        self.delay_state_query = old_delay_state  
+        self.State = self.container_state_queue + self.node_state_queue + self.loss_state_query + self.delay_state_query  
+        self.action = [-1, -1] 
+        self.action_queue = [-1, -1]    
         self.service_weight = [[0, 1, 0, 0, 0.5, 0.8], [1, 0, 1, 0, 0.6, 0.4], [0, 1, 0, 0.8, 0.3, 0], [0, 0, 0.8, 0, 0.2, 0], [0.5, 0.6, 0.3, 0.2, 0, 1], [0.8, 0.4, 0, 0, 1, 0]]  
-        # Communication distance between nodes
-        # 节点间的（物理）通信距离
         self.Dist = [[0, 200, 100, 300, 400], [200, 0, 200, 100, 150], [100, 200, 0, 250, 300], [300, 100, 250, 0, 350], [400, 150, 300, 350, 0]]
     
     def calContainerNumber(self, new_container):
@@ -154,12 +133,8 @@ class Env():
             NodeCPU.append(U)
             NodeMemory.append(M)
             NodeBandWith.append(B)
-        
-            # if NodeCPU[i] < CPUnum[i] or NodeMemory[i] < Mem[i] or NodeBandWith[i] < BandWidth[i]:
-            #      Var -= 100
             if NodeCPU[i] > CPUnum[i] or NodeMemory[i] > Mem[i]:
                 Var -= 1
-                # Variance of node loads
             if NodeBandWith[i] < BandWidth[i]:
                 Var += 10
         Var += beta[0] * np.var(NodeCPU) * 1000 + beta[1] * np.var(NodeMemory) / 100
@@ -173,11 +148,7 @@ class Env():
         re = 0
         g1 = self.sumCost() #
         g1 /= 10
-        # g1 = (g1 - 1300) / (1800 - 1300)
         g2, NodeCPU, NodeMemory, NodeBandWith = self.CalcuVar()
-        # g2 = 0
-        # g2 /= 1000
-        # g2 = - (g2 - (-500)) / (-300 - (-500))
         re += alpha * g1 + (1 - alpha) * g2
         return re, g1, g2
 
@@ -215,55 +186,31 @@ class Env():
         self.state_update(self.container_state_queue, self.node_state_queue, self.loss_state_query, self.delay_state_query)
         return self.State
 
-    # def CalcuLoss(self):
-    #     loss = node_loss[self.action[0]]
-    #     feature = (40 - loss) * 12
-    #     return feature
+   
 
-    # def CalcuDelay(self):
-    #     # act[0]为部署在几号节点上，act[1]为部署第几个微服务容器实例
-    #     delay = node_delay[self.action[0]]
-    #     feature = (500 - delay) / 10 / ContainerNumber
-    #     return 
-    
-    """要修改！！！
-    """
     def cal_loss(self):
         return self.loss_state_query[6]*2 + self.loss_state_query[7]*1.5 + self.loss_state_query[8]*1.8
-        # return self.loss_state_query[6] * 0 + self.loss_state_query[7] * 0 + self.loss_state_query[8] * 0
-        
     def cal_delay(self):
         return self.delay_state_query[6] * 2 + self.delay_state_query[7] * 1.5 + self.delay_state_query[8] * 1.8
-        # return self.delay_state_query[6] * 0 + self.delay_state_query[7] * 0 + self.delay_state_query[8] * 0
-    
-    # def cal_loss(self):
-    #     return self.loss_state_query[0]*1 + self.loss_state_query[1]*2 + self.loss_state_query[2]*0.2 + self.loss_state_query[3]*1.8 +  self.loss_state_query[4]*1.8 + self.loss_state_query[5]*1.6 
-        
-    # def cal_delay(self):
-    #     return self.delay_state_query[0]*1 + self.delay_state_query[1]*2 + self.delay_state_query[2]*0.2 + self.delay_state_query[3]*1.8 +  self.delay_state_query[4]*1.8 + self.delay_state_query[5]*1.6
       
     def step(self, action):
-        # input: action(Targetnode，ContainerIndex)
-        # output: next state, cost, done
         global count
         self.action = self.index_to_act(action)
         self.update()
 
-        feature1, feature1_1, feature1_2 = self.CalcuCostFin()  # 35左右
-        feature2 = self.cal_loss()   # 35/6左右
-        feature3 = self.cal_delay()     # 35/6左右
-
+        feature1, feature1_1, feature1_2 = self.CalcuCostFin() 
+        feature2 = self.cal_loss()   
+        feature3 = self.cal_delay()     
         done = False
         count = 0
 
-        # 判断当前为第几步,用来判断是否完成迭代
         for i in range(ContainerNumber):
             if self.container_state_queue[(ResourceType + 1) * i] != -1:
                 count += 1
         if count == ContainerNumber:
             done = True
 
-        # 返回当前的状态、通信开销以及资源方差、loss和、延迟、通讯开销g1、负载均衡方差g2
+      
         return self.State, feature1, feature2, feature3, done, feature1_1, feature1_2
 
     def reset(self, start_obs, new_container):

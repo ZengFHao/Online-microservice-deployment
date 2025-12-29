@@ -1,12 +1,9 @@
 import os
 
-# 定义要删除的文件列表
 files_to_delete = [ 'trainloss.txt','mdqn_model.ckpt','feature-reward.log','pareto_details.txt']
 
-# 获取当前目录
 current_directory = os.getcwd()
 
-# 构建文件路径并删除文件
 for file_name in files_to_delete:
     file_path = os.path.join(current_directory, file_name)
     try:

@@ -8,17 +8,12 @@ def merge_q(q1, q2, q3, act_dim, flag, flag_temp):
 
     wq = [1 / 3, 1 / 3, 1 / 3]
     merged_q = q1 * wq[0] + q2 * wq[1] + q3 * wq[2]
-    # q_index = np.argsort(merged_q)
-    # act为preq中的最大值原先对应的索引,原来的列表里第index[i]位 是第i小的数(较大的)
-    # act = q_index[act_dim - 1]
-    # q_index = np.argsort(merged_q)
     q_index = np.argsort(merged_q)
-    # act为preq中的最大值原先对应的索引,原来的列表里第index[i]位 是第i小的数(较大的)
     act = q_index[act_dim - 1]
     i = 1
     while flag[act] == 1 or flag_temp[act % newContainerNumber] == 1:
         i += 1
-        act = q_index[act_dim - i]  # 选择Q最大的下标，即对应的动作
+        act = q_index[act_dim - i] 
     flag[act] = 1
     flag_temp[act] = 1
     flag_temp[act % newContainerNumber] = 1
@@ -29,7 +24,7 @@ def merge_q(q1, q2, q3, act_dim, flag, flag_temp):
 def pareto_q(q1, q2, q3, act_dim, flag, flag_temp):
     solution_set=[]
     for i in range(act_dim):
-        if flag[i]==0 and flag_temp[i % newContainerNumber]==0: #当该action没有被选择过时
+        if flag[i]==0 and flag_temp[i % newContainerNumber]==0: 
             solution_set.append([[q1[i],q2[i],q3[i]],i])
     pareto_set=QPareto(solution_set)
     

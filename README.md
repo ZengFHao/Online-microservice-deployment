@@ -4,12 +4,11 @@
 [![PaddlePaddle](https://img.shields.io/badge/PaddlePaddle-2.0+-orange.svg)](https://www.paddlepaddle.org.cn/)
 [![PARL](https://img.shields.io/badge/PARL-1.3+-green.svg)](https://github.com/PaddlePaddle/PARL)
 
-[English](#english)
 
 ---
 
 <a name="english"></a>
-## 🇬🇧 English Description
+##  Description
 
 This repository implements a **Multi-Objective Deep Reinforcement Learning (DRL)** framework to optimize the placement of containerized microservices across edge/cloud nodes. Built upon **PaddlePaddle** and **PARL**, it employs a decomposed Deep Q-Network (DQN) approach to solve the placement problem by simultaneously optimizing three conflicting objectives: **Communication Cost**, **Load Balance**, and **Network Reliability**.
 
@@ -69,3 +68,30 @@ python new_train.py
 ```
 python delete_script.py
 ```
+
+### ⚙️ Parameter Configuration
+
+You can customize the training process and environment simulation by modifying the following key parameters in `new_train.py` and `env.py`.
+
+| Parameter | File | Description |
+| :--- | :--- | :--- |
+| `BATCH_SIZE` | `new_train.py` | Controls the size of the data batch used for each training step. |
+| `LEARNING_RATE` | `new_train.py` | Controls the step size during model optimization (learning rate). |
+| `GAMMA` | `new_train.py` | Controls the experience replay ratio (discount factor for future rewards). |
+| `MEMORY_WARMUP_SIZE` | `new_train.py` | Sets the minimum number of experiences required in the replay buffer before training starts. |
+| `node_delay` | `env.py` | Defines the network latency values (in ms) between different nodes. |
+| `node_loss` | `env.py` | Defines the packet loss probability (%) between different nodes. |
+| `CPUnum` | `env.py` | Defines the CPU resource capacity for each node. |
+| `Mem` | `env.py` | Defines the Memory resource capacity for each node. |
+| `e_greed` | `env.py` | Controls the exploration rate (epsilon) for the agent's action selection. |
+
+---
+
+### 🧠 Algorithm Details
+The code uses a Decomposed Multi-Objective DQN. Instead of a single reward scalar, the environment returns three distinct reward signals ($r_1, r_2, r_3$).
+- **State ($S$)**: Composition of container status, node resource usage, and network conditions.
+- **Action ($A$)**: Selecting a specific node to deploy a specific microservice container.
+- **Policy**:
+  - Calculates Q-values for all objectives: $Q_1(s,a), Q_2(s,a), Q_3(s,a)$.
+  - Selects actions based on Pareto Dominance relationships among these Q-values (defined in policy.py).
+
