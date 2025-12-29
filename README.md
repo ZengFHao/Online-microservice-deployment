@@ -24,6 +24,7 @@ This repository implements a **Multi-Objective Deep Reinforcement Learning (DRL)
 
 ### 📂 File Structure
 
+
 | File | Description |
 | :--- | :--- |
 | `new_train.py` | **Main Entry Point**. Orchestrates the training loop, environment interaction, and logging. |
@@ -73,6 +74,7 @@ python delete_script.py
 
 You can customize the training process and environment simulation by modifying the following key parameters in `new_train.py` and `env.py`.
 
+---
 | Parameter | File | Description |
 | :--- | :--- | :--- |
 | `BATCH_SIZE` | `new_train.py` | Controls the size of the data batch used for each training step. |
@@ -84,7 +86,6 @@ You can customize the training process and environment simulation by modifying t
 | `CPUnum` | `env.py` | Defines the CPU resource capacity for each node. |
 | `Mem` | `env.py` | Defines the Memory resource capacity for each node. |
 | `e_greed` | `env.py` | Controls the exploration rate (epsilon) for the agent's action selection. |
-
 ---
 
 ### 🧠 Algorithm Details
