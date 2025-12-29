@@ -44,12 +44,12 @@ This repository implements a **Multi-Objective Deep Reinforcement Learning (DRL)
 Ensure you have Python 3.7 installed. Install the required dependencies:
 
 ```bash
-pip install paddlepaddle parl numpy
+pip install requirements.txt
 ```
 ### 🏃‍♂️ Usage
 
 1. Start Training:
-Run the main training script. You can optionally provide a run index argument (useful for batch experiments).
+Run the main training script.
 
 ```bash
 python new_train.py
