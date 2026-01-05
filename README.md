@@ -1,4 +1,4 @@
-# Multi-Objective Microservice Placement using Deep Reinforcement Learning 
+# Online Microservice Deployment in Edge Networks via Multiobjective Deep Reinforcement Learning
 
 [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/)
 [![PaddlePaddle](https://img.shields.io/badge/PaddlePaddle-2.0+-orange.svg)](https://www.paddlepaddle.org.cn/)
@@ -10,17 +10,17 @@
 <a name="english"></a>
 ##  Description
 
-This repository implements a **Multi-Objective Deep Reinforcement Learning (DRL)** framework to optimize the placement of containerized microservices across edge/cloud nodes. Built upon **PaddlePaddle** and **PARL**, it employs a decomposed Deep Q-Network (DQN) approach to solve the placement problem by simultaneously optimizing three conflicting objectives: **Communication Cost**, **Load Balance**, and **Network Reliability**.
+This repository implements a **Multi-Objective Deep Reinforcement Learning (DRL)** framework to optimize the online deployment of containerized microservices across edge/cloud nodes. Built upon **PaddlePaddle** and **PARL**, it employs a decomposed Deep Q-Network (DQN) approach to solve the online deployment problem by simultaneously optimizing three conflicting objectives: **Communication Cost**, **Load Balance**, and **Network Reliability**.
 
 ### 🚀 Key Features
 
 * **Multi-Objective Optimization**: The agent learns to trade off between:
     1.  **Communication Cost**: Data transfer overhead between interacting services.
-    2.  **Load Variance**: Balancing CPU and Memory usage across nodes.
+    2.  **Load Balance**: Balancing CPU and Memory usage across nodes.
     3.  **Reliability**: Minimizing network delay and packet loss.
-* **Pareto-based Policy**: Implements a custom action selection strategy (`policy.py`) using **Pareto Dominance** to select optimal deployment nodes instead of a simple scalar reward sum.
+* **Pareto-based Policy**: Implements a custom action selection strategy (`policy.py`) using **Pareto Dominance** to select optimal online deployment nodes instead of a simple scalar reward sum.
 * **Decomposed Architecture**: Utilizes three separate Q-networks (in `agent.py`) to estimate values for different objectives independently.
-* **Custom Simulation**: Includes a flexible environment (`env.py`) modeling node resources (CPU, RAM, Bandwidth) and service dependency graphs.
+* **Edge Environment Setting**: Includes a flexible environment (`env.py`) modeling node resources (CPU, RAM, Bandwidth) and service dependency graphs.
 
 ### 📂 File Structure
 
